@@ -1,49 +1,33 @@
 import { Plus } from "phosphor-react";
-import { useState } from "react"
-import { Task } from "./Task";
+import { FormEvent, useContext, useState } from "react"
 import styles from "./CreateTask.module.scss"
+import { TasksContext } from "../App";
 
-interface Props {
-  taskList: Task[]
-}
 
-export function CreateTask({taskList}:Props) {
+export function CreateTask() {
 
-  const [tasks, setTasks] = useState(taskList)
-  tasks === undefined && setTasks([])
+  const { submit } = useContext(TasksContext)
 
   const [newTaskText,setNewTaskText] = useState('')
-  const [nextId,setNextId] = useState(tasks.length > 0 ? tasks[tasks.length - 1].id + 1 : 1)
 
-  function handleCreateTask() {
-    event?.preventDefault();
-
-    const newTask:Task = {
-      id: nextId,
-      description: newTaskText,
-      isDone: false,
-    }
-
-    const newTaskList = [...tasks, newTask]
-
-    setTasks(newTaskList)
-    setNewTaskText('')
-    setNextId(nextId + 1)
-    console.log(tasks)
+  function handleCreateTask(event:FormEvent) {
+    event.preventDefault();
+    submit(newTaskText)
   }
 
-  function handleTaskText() {
-    setNewTaskText(event?.target.value)
-  }
   return(
     <>
-      <p>{newTaskText}</p>
-      <form onSubmit={handleCreateTask}>
-        <input  onChange={handleTaskText}
-                value={newTaskText}/>
-        <button className={styles.btn} type="submit">
-          <Plus size={16} />
-          Nova Tarefa
+      <form onSubmit={handleCreateTask}
+            className={styles.formWrapper}>
+        <input  onChange={(e) => setNewTaskText(e.target.value)}
+                value={newTaskText}
+                className={styles.input}
+                placeholder="Escreva sua tarefa..."
+                required/>
+        <button className={styles.btn}
+                type="submit">
+          <Plus size={'1.3rem'} />
+          <span> Nova Tarefa</span>
         </button>
       </form>
     </>
